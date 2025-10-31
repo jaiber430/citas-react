@@ -13,7 +13,7 @@ import Error from "./error";
 // const [cliente, setCliente] = useState([]);
 // const [modal, setModal] = useState(false);
 
-const Formulario = ({ pacientes, setPacientes, paciente }) => {
+const Formulario = ({ pacientes, setPacientes, paciente, setPaciente }) => {
 
   // Reglas de Hook => No dentro de condicionales ni al final de return ni dentro
   // Se usa esto para poder mostrar lo que escribe el usuario
@@ -28,7 +28,16 @@ const Formulario = ({ pacientes, setPacientes, paciente }) => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    console.log(Object.keys(paciente).length > 0)
+
+    if (Object.keys(paciente).length > 0) {
+      // Mostrar información en los campos de texto
+      setNombre(paciente.nombre);
+      setPropietario(paciente.propietario);
+      setEmail(paciente.email);
+      setFecha(paciente.fecha);
+      setSintomas(paciente.sintomas);
+    }
+
   }, [paciente])
 
   const generarId = () => {
@@ -51,8 +60,6 @@ const Formulario = ({ pacientes, setPacientes, paciente }) => {
     }
     setError(false);
 
-    // Objeto paciente
-
     // Enviar todo los datos => Crear un objeto
     const objetoPaciente = {
       nombre,
@@ -60,10 +67,30 @@ const Formulario = ({ pacientes, setPacientes, paciente }) => {
       email,
       fecha,
       sintomas,
-      id: generarId(),
     }
+
+    if (paciente.id) {
+      // Editar el paciente 
+      objetoPaciente.id = paciente.id;
+      console.log(objetoPaciente);
+      console.log(paciente);
+
+      // Iterar sobre cada elemento sin encuantra un id que coincida actualiza 
+      const pacientesActualizados = pacientes.map(pacienteState => pacienteState.id == paciente.id ? objetoPaciente : pacienteState);
+
+      // Actualizar con los nuevos datos del paciente
+      setPaciente({})
+
+      // Actualización
+      setPacientes(pacientesActualizados);
+    } else {
+      // Agrear nuevo paciente
+      objetoPaciente.id = generarId();
+      setPacientes([...pacientes, objetoPaciente]);
+    }
+
+    // Objeto paciente
     // Pasar datos al momento de enviar ...Crear un arreglo nuevo para nno sustituir datos anteriores
-    setPacientes([...pacientes, objetoPaciente]);
 
     // Reiniciar dormulario cuando se envia (Campos vacios)
     setNombre('');
@@ -169,7 +196,7 @@ const Formulario = ({ pacientes, setPacientes, paciente }) => {
         <input
           type="submit"
           className="bg-indigo-600 w-full p-3 text-white uppercase font-bold hover:bg-indigo-800 cursor-pointer transition-colors mt-5 rounded-md"
-          value='Agregar Paciente' />
+          value={paciente.id ? 'Editar Paciente' : 'Agregar Paciente'} />
       </form>
     </div>
   )
