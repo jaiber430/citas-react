@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 // useEffect => Se usa para cosnultar apis / Actualizar componentes
-import Error from "./error";
+import Error from "./Error";
 
 // Ejemplo useEffect
 // useEffect(()=>{
